@@ -38,21 +38,20 @@ INSERT INTO direccion (
   usuario_id
 )
 VALUES (
-  1,
+  true,
   'Calle Principal',
   123,
   1
 );
 INSERT INTO direccion (
-    id,
-    nombre_calle,
-    numero_calle,
-    usuario_id,
-    direccion_principal
-) VALUES (
-    2,
-    'Avenida Andalucía',
-    25,
-    1,
-    false
+  direccion_principal,
+  nombre_calle,
+  numero_calle,
+  usuario_id
+)
+VALUES (
+  false,
+  'Calle Andalucia',
+  23,
+  1
 );
