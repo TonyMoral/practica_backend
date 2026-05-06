@@ -61,5 +61,6 @@ public class GeneralConstant {
     public static final String DIRECCION_PRINCIPAL_NO_ENCONTRADA_ERROR_MESSAGE = "El usuario indicado no tiene direccion principal";
 
     public static final String USUARIO_NO_ADMIN_ERROR_MESSAGE = "El usuario no puede realizar esta operación porque no es admin";
+    public static final String OPERACION_NO_SOPORTADA_ERROR_CODE = null;
 
 }

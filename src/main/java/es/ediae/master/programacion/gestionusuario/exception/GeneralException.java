@@ -8,6 +8,10 @@ public class GeneralException extends Exception {
         this.mensajeDeError = mensajeDeError;
     }
 
+    public GeneralException(String operacionNoSoportadaErrorCode, String operacionNoSoportadaErrorCode2) {
+        //TODO Auto-generated constructor stub
+    }
+
     private int codigoDeError;
 
     private String mensajeDeError;

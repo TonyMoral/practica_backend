@@ -17,6 +17,7 @@ public class DireccionServiceImpl implements IDireccionService {
     @Override
     public List<DireccionEntity> obtenerTodasLasDirecciones() {
         return direccionService.obtenerTodasLasDirecciones();
+        
     }
 
 }

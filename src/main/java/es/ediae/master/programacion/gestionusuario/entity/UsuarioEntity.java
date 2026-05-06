@@ -132,4 +132,5 @@ public class UsuarioEntity {
         this.puestoDeTrabajo = puestoDeTrabajo;
     }
 
+
 }
