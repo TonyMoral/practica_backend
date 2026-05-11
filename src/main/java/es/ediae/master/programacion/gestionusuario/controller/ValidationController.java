@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.ediae.master.programacion.gestionusuario.dto.ProductoDTO;
 import jakarta.validation.Valid;
 
 //Modificar el DTO para incluir validaciones
@@ -17,10 +16,10 @@ import jakarta.validation.Valid;
 @Validated
 public class ValidationController {
 
-    @PostMapping("/producto")
+   /*  @PostMapping("/producto")
     public ResponseEntity<ProductoDTO> crearProducto(@RequestBody @Valid ProductoDTO productoDTO) {
         // Aquí podrías agregar lógica para guardar el producto en la base de datos
         return ResponseEntity.ok(productoDTO);
-    }
+    } */
 
 }
