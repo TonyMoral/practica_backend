@@ -44,6 +44,9 @@ public class UsuarioEntity {
     @JoinColumn(name = "puesto_de_trabajo_id", nullable = true)
     private PuestoDeTrabajoEntity puestoDeTrabajo;
 
+    @Column(name = "es_admin", nullable = false)
+    private Boolean esAdmin;
+
     public Integer getId() {
         return id;
     }
@@ -132,5 +135,11 @@ public class UsuarioEntity {
         this.puestoDeTrabajo = puestoDeTrabajo;
     }
 
+    public Boolean getEsAdmin() {
+        return esAdmin;
+    }
 
+    public void setEsAdmin(Boolean esAdmin) {
+        this.esAdmin = esAdmin;
+    }
 }

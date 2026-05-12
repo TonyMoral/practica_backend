@@ -20,6 +20,7 @@ public class UsuarioMapper {
         dto.setPrimerApellido(entity.getPrimerApellido());
         dto.setSegundoApellido(entity.getSegundoApellido());
         dto.setFechaNacimiento(entity.getFechaNacimiento());
+        dto.setEsAdmin(entity.getEsAdmin());
 
         if (entity.getHoraDesayuno() != null) {
             dto.setHoraDesayuno(entity.getHoraDesayuno().toString());
@@ -49,6 +50,7 @@ public class UsuarioMapper {
         entity.setFechaHoraCreacion(new java.sql.Date(System.currentTimeMillis()));
         entity.setContrasena(dto.getContrasena());
         entity.setFechaNacimiento(dto.getFechaNacimiento());
+        entity.setEsAdmin(dto.getEsAdmin() != null ? dto.getEsAdmin() : false);
 
         if (dto.getHoraDesayuno() != null) {
             entity.setHoraDesayuno(java.sql.Time.valueOf(dto.getHoraDesayuno()));

@@ -83,8 +83,13 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // Método para crear un nuevo usuario,
     // convierte el DTO a entidad para guardarlo en la base de datos y
     // luego convierte la entidad guardada a DTO para devolverla
+    // Antes de crear el usuario, verifica que no exista otro usuario con el mismo nick para evitar duplicados
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO dto) {
+
+        if (usuarioRepository.findByNickUsuario(dto.getNickUsuario()).isPresent()) {
+            throw new RuntimeException("El nick de usuario ya existe " + dto.getNickUsuario());
+        }
 
         UsuarioEntity entity = usuarioMapper.convertirAEntity(dto);
 
@@ -112,16 +117,23 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // luego actualiza los campos con los datos del DTO,
     // guarda la entidad actualizada en la base de datos y
     // finalmente convierte la entidad actualizada a DTO para devolverla
+    // Antes de actualizar el usuario, verifica que no exista otro usuario con el mismo nick para evitar duplicados
     @Override
     public UsuarioResponseDTO actualizarUsuario(Integer id, UsuarioRequestDTO usuarioDTO) {
 
         UsuarioEntity usuarioExistente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        Optional<UsuarioEntity> usuarioConMismoNick = usuarioRepository.findByNickUsuario(usuarioDTO.getNickUsuario());
+        if (usuarioConMismoNick.isPresent() && !usuarioConMismoNick.get().getId().equals(id)) {
+            throw new RuntimeException("El nick de usuario ya existe: " + usuarioDTO.getNickUsuario());
+        }
+
         usuarioExistente.setNickUsuario(usuarioDTO.getNickUsuario());
         usuarioExistente.setNombre(usuarioDTO.getNombre());
         usuarioExistente.setPrimerApellido(usuarioDTO.getPrimerApellido());
         usuarioExistente.setSegundoApellido(usuarioDTO.getSegundoApellido());
+        usuarioExistente.setEsAdmin(usuarioDTO.getEsAdmin() != null ? usuarioDTO.getEsAdmin() : false);
         if (usuarioDTO.getHoraDesayuno() != null) {
             usuarioExistente.setHoraDesayuno(java.sql.Time.valueOf(usuarioDTO.getHoraDesayuno()));
         }

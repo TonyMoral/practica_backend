@@ -17,6 +17,8 @@ public class UsuarioResponseDTO {
     private Integer puestoDeTrabajoId;
     private String puestoDeTrabajoNombre;
 
+    private Boolean esAdmin; 
+
     public Integer getId() {
         return id;
     }
@@ -105,6 +107,14 @@ public class UsuarioResponseDTO {
 
     public void setFechaNacimiento(String fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public Boolean getEsAdmin() {
+        return esAdmin;
+    }
+
+    public void setEsAdmin(Boolean esAdmin) {
+        this.esAdmin = esAdmin;
     }
 
 }

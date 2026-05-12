@@ -13,6 +13,7 @@ public class UsuarioRequestDTO {
     private String horaDesayuno;
     private Integer generoId;
     private Integer puestoDeTrabajoId;
+    private Boolean esAdmin;
 
     public String getNickUsuario() {
         return nickUsuario;
@@ -86,6 +87,12 @@ public class UsuarioRequestDTO {
         this.puestoDeTrabajoId = puestoDeTrabajoId;
     }
 
+    public Boolean getEsAdmin() {
+        return esAdmin;
+    }
 
+    public void setEsAdmin(Boolean esAdmin) {
+        this.esAdmin = esAdmin;
+    }
 
 }
