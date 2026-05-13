@@ -52,10 +52,22 @@ public class DireccionServiceImpl implements IDireccionService {
         DireccionEntity entity = direccionMapper.convertirAEntity(direccionDto);
 
         UsuarioEntity usuario = usuarioRepository.findById(direccionDto.getUsuarioId()).orElse(null);
-        if (usuario != null) {
-            entity.setUsuario(usuario);
-        }
 
+            entity.setUsuario(usuario);
+        
+            // Si la nueva dirección es marcada como principal, desmarcar otras direcciones principales del mismo usuario
+            if (direccionDto.getDireccionPrincipal() != null) {
+                if (direccionDto.getDireccionPrincipal()) {
+                    // Marcar como dirección principaly desmarcar otras direcciones principales del mismo usuario
+                    List<DireccionEntity> direccionesUsuario = direccionRepository.buscarPorUsuarioId(entity.getUsuario().getId());
+                    for (DireccionEntity dir : direccionesUsuario) {
+                        if (dir.getDireccionPrincipal()) {
+                            dir.setDireccionPrincipal(false);
+                            direccionRepository.save(dir);
+                        }
+                    }
+                }
+            }
         return direccionMapper.convertirADTO(direccionRepository.save(entity));
     }
 
