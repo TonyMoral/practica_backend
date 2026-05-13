@@ -5,6 +5,8 @@ import java.util.List;
 
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioResponseDTO;
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioResponseDTO;
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioRequestDTO;
 
 
 public interface IUsuarioService {
@@ -20,4 +22,9 @@ public interface IUsuarioService {
     UsuarioResponseDTO actualizarUsuario(Integer id, UsuarioRequestDTO usuarioDTO);
 
     void eliminarUsuario(Integer id);
+
+    ImagenUsuarioResponseDTO crearImagenUsuario(ImagenUsuarioRequestDTO imagenDTO);
+    ImagenUsuarioResponseDTO actualizarImagenUsuario(Integer id, ImagenUsuarioRequestDTO imagenDTO);
+    ImagenUsuarioResponseDTO obtenerImagenUsuario(Integer id);
+    void eliminarImagenUsuario(Integer id);
 }

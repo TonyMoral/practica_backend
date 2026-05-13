@@ -62,4 +62,6 @@ public class UsuarioController {
         // Pasamos las credenciales de validación al servicio
         return usuarioService.iniciarSesion(nickUsuario, contrasena);
     }
+
+    
 }

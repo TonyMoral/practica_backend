@@ -10,15 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioRequestDTO;
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioResponseDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioResponseDTO;
 import es.ediae.master.programacion.gestionusuario.entity.DireccionEntity;
 import es.ediae.master.programacion.gestionusuario.entity.GeneroEntity;
+import es.ediae.master.programacion.gestionusuario.entity.ImagenUsuarioEntity;
 import es.ediae.master.programacion.gestionusuario.entity.PuestoDeTrabajoEntity;
 import es.ediae.master.programacion.gestionusuario.entity.UsuarioEntity;
+import es.ediae.master.programacion.gestionusuario.mapper.ImagenUsuarioMapper;
 import es.ediae.master.programacion.gestionusuario.mapper.UsuarioMapper;
 import es.ediae.master.programacion.gestionusuario.repository.DireccionRepository;
 import es.ediae.master.programacion.gestionusuario.repository.GeneroRepository;
+import es.ediae.master.programacion.gestionusuario.repository.ImagenUsuarioRepository;
 import es.ediae.master.programacion.gestionusuario.repository.UsuarioRepository;
 import es.ediae.master.programacion.gestionusuario.service.IUsuarioService;
 
@@ -39,6 +44,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     public DireccionRepository direccionRepository;
+
+    @Autowired
+    public ImagenUsuarioRepository imagenUsuarioRepository;
+    
+    @Autowired
+    public ImagenUsuarioMapper imagenUsuarioMapper;
 
     // Método para iniciar sesión,
     // verifica si existe un usuario con el nick y la contraseña
@@ -171,5 +182,42 @@ public class UsuarioServiceImpl implements IUsuarioService {
             direccionRepository.deleteAll(direcciones);
         }
         usuarioRepository.deleteById(id);
+    }
+
+    // Método para crear imagen de usuario
+    @Override
+    public ImagenUsuarioResponseDTO crearImagenUsuario(ImagenUsuarioRequestDTO imagenDTO) {
+        UsuarioEntity usuario = usuarioRepository.findById(imagenDTO.getUsuarioId())
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        ImagenUsuarioEntity entity = imagenUsuarioMapper.convertirAEntity(imagenDTO);
+        entity.setUsuario(usuario);
+
+        ImagenUsuarioEntity imagenGuardada = imagenUsuarioRepository.save(entity);
+        return imagenUsuarioMapper.convertirADTO(imagenGuardada);
+    }
+
+    // Método para actualizar la imagen de usuario
+    @Override
+    public ImagenUsuarioResponseDTO actualizarImagenUsuario(Integer id, ImagenUsuarioRequestDTO imagenDTO) {
+        ImagenUsuarioEntity existente = imagenUsuarioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+
+        existente.setImagen(imagenDTO.getImagen());
+        return imagenUsuarioMapper.convertirADTO(imagenUsuarioRepository.save(existente));
+    }
+
+    // Método para obtener las imagenes de usuario por ID
+    @Override
+    public ImagenUsuarioResponseDTO obtenerImagenUsuario(Integer id) {
+        ImagenUsuarioEntity entity = imagenUsuarioRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+        return imagenUsuarioMapper.convertirADTO(entity);
+    }
+
+    // Método para eliminar una imagen de usuario por id
+    @Override
+    public void eliminarImagenUsuario(Integer id) {
+        imagenUsuarioRepository.deleteById(id);
     }
 }
