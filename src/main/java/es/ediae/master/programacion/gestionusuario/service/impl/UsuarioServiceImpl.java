@@ -8,13 +8,16 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioResponseDTO;
+import es.ediae.master.programacion.gestionusuario.entity.DireccionEntity;
 import es.ediae.master.programacion.gestionusuario.entity.GeneroEntity;
 import es.ediae.master.programacion.gestionusuario.entity.PuestoDeTrabajoEntity;
 import es.ediae.master.programacion.gestionusuario.entity.UsuarioEntity;
 import es.ediae.master.programacion.gestionusuario.mapper.UsuarioMapper;
+import es.ediae.master.programacion.gestionusuario.repository.DireccionRepository;
 import es.ediae.master.programacion.gestionusuario.repository.GeneroRepository;
 import es.ediae.master.programacion.gestionusuario.repository.UsuarioRepository;
 import es.ediae.master.programacion.gestionusuario.service.IUsuarioService;
@@ -33,6 +36,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    public DireccionRepository direccionRepository;
 
     // Método para iniciar sesión,
     // verifica si existe un usuario con el nick y la contraseña
@@ -152,10 +158,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     }
 
-    // Método para eliminar un usuario por su ID,
-    // llama al método deleteById del repositorio
+    // Método para eliminar un usuario por su ID, 
+    // primero busca las direcciones asociadas al usuario y las elimina, luego elimina el usuario
     @Override
+    // @Transactional sirve asegurar que eliminar direcciones y eliminar usuario 
+    // se realicen en una sola transacción, garantizando la integridad de los datos
+    @Transactional
     public void eliminarUsuario(Integer id) {
+        List<DireccionEntity> direcciones = direccionRepository.buscarPorUsuarioId(id);
+
+        if (direcciones != null && !direcciones.isEmpty()) {
+            direccionRepository.deleteAll(direcciones);
+        }
         usuarioRepository.deleteById(id);
     }
 }
