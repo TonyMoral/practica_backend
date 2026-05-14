@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import es.ediae.master.programacion.gestionusuario.dto.GeneroRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.GeneroResponseDTO;
 import es.ediae.master.programacion.gestionusuario.entity.GeneroEntity;
+import es.ediae.master.programacion.gestionusuario.exception.GeneroNoEncontradoException;
+import es.ediae.master.programacion.gestionusuario.exception.GeneroYaExisteException;
 import es.ediae.master.programacion.gestionusuario.mapper.GeneroMapper;
 import es.ediae.master.programacion.gestionusuario.repository.GeneroRepository;
 import es.ediae.master.programacion.gestionusuario.service.IGeneroService;
@@ -38,7 +40,7 @@ public class GeneroServiceImpl implements IGeneroService {
     // Metodo para obtener un genero por su ID, convertirlo a DTO y devolverlo al controlador
     @Override
     public GeneroResponseDTO obtenerGenero(Integer id) {
-        GeneroEntity entidad = generoRepository.findById(id).orElseThrow(() -> new RuntimeException("Genero no encontrado"));
+        GeneroEntity entidad = generoRepository.findById(id).orElseThrow(() -> new GeneroNoEncontradoException());
         return generoMapper.convertirADTO(entidad);
     }
 
@@ -50,7 +52,7 @@ public class GeneroServiceImpl implements IGeneroService {
 
         // Comprobar si el genero ya existe en la base de datos (ignorando mayusculas/minusculas)
         if (generoRepository.findByNombreIgnoreCase(nombre).isPresent()) {
-            throw new RuntimeException("El genero '" + nombre + "' ya existe");
+            throw new GeneroYaExisteException();
         }
 
         
@@ -62,14 +64,14 @@ public class GeneroServiceImpl implements IGeneroService {
     // actualizar la entidad, guardarla en la base de datos y devolverla como DTO
     @Override
     public GeneroResponseDTO actualizarGenero(Integer id, GeneroRequestDTO generoRequestDTO) {
-        GeneroEntity entidadExistente = generoRepository.findById(id).orElseThrow(() -> new RuntimeException("Genero no encontrado"));
+        GeneroEntity entidadExistente = generoRepository.findById(id).orElseThrow(() -> new GeneroNoEncontradoException());
         
         String nuevoNombre = generoRequestDTO.getNombre().trim();
 
         // Comprobar si el genero ya existe en la base de datos (ignorando mayusculas/minusculas)
         Optional<GeneroEntity> generoExistente = generoRepository.findByNombreIgnoreCase(nuevoNombre);
         if (generoExistente.isPresent() && !generoExistente.get().getId().equals(id)) {
-            throw new RuntimeException("El genero '" + nuevoNombre + "' ya existe");
+            throw new GeneroYaExisteException();
         }
 
         entidadExistente.setNombre(nuevoNombre);

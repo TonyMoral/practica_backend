@@ -10,6 +10,8 @@ import es.ediae.master.programacion.gestionusuario.dto.DireccionRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.DireccionResponseDTO;
 import es.ediae.master.programacion.gestionusuario.entity.DireccionEntity;
 import es.ediae.master.programacion.gestionusuario.entity.UsuarioEntity;
+import es.ediae.master.programacion.gestionusuario.exception.DireccionNoEncontradaException;
+import es.ediae.master.programacion.gestionusuario.exception.UsuarioNoEncontradoException;
 import es.ediae.master.programacion.gestionusuario.mapper.DireccionMapper;
 import es.ediae.master.programacion.gestionusuario.repository.DireccionRepository;
 import es.ediae.master.programacion.gestionusuario.repository.UsuarioRepository;
@@ -42,8 +44,9 @@ public class DireccionServiceImpl implements IDireccionService {
     // Metodo para obtener una direccion por su id
     @Override
     public DireccionResponseDTO obtenerDireccion(Integer id) {
-        DireccionEntity entity = direccionRepository.findById(id).orElse(null);
-        return entity != null ? direccionMapper.convertirADTO(entity) : null;
+        DireccionEntity entity = direccionRepository.findById(id).orElseThrow(() -> new DireccionNoEncontradaException());
+
+        return direccionMapper.convertirADTO(entity);
     }
 
     // Metodo para crear una nueva direccion
@@ -51,7 +54,7 @@ public class DireccionServiceImpl implements IDireccionService {
     public DireccionResponseDTO crearDireccion(DireccionRequestDTO direccionDto) {
         DireccionEntity entity = direccionMapper.convertirAEntity(direccionDto);
 
-        UsuarioEntity usuario = usuarioRepository.findById(direccionDto.getUsuarioId()).orElse(null);
+        UsuarioEntity usuario = usuarioRepository.findById(direccionDto.getUsuarioId()).orElseThrow(() -> new UsuarioNoEncontradoException());
 
             entity.setUsuario(usuario);
         
@@ -74,7 +77,7 @@ public class DireccionServiceImpl implements IDireccionService {
     // Metodo para actualizar una direccion existente
     @Override
     public DireccionResponseDTO actualizarDireccion(Integer id, DireccionRequestDTO direccionDto) {
-        DireccionEntity direccionExistente = direccionRepository.findById(id).orElse(null);
+        DireccionEntity direccionExistente = direccionRepository.findById(id).orElseThrow(() -> new DireccionNoEncontradaException());
         if (direccionExistente != null) {
             direccionExistente.setNombreCalle(direccionDto.getNombreCalle());
             direccionExistente.setNumeroCalle(direccionDto.getNumeroCalle());

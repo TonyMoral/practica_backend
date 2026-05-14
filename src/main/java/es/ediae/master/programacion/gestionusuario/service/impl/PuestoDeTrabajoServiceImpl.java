@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import es.ediae.master.programacion.gestionusuario.dto.PuestoDeTrabajoRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.PuestoDeTrabajoResponseDTO;
 import es.ediae.master.programacion.gestionusuario.entity.PuestoDeTrabajoEntity;
+import es.ediae.master.programacion.gestionusuario.exception.DireccionNoEncontradaException;
+import es.ediae.master.programacion.gestionusuario.exception.PuestoDeTrabajoNoEncontradoException;
+import es.ediae.master.programacion.gestionusuario.exception.PuestoDeTrabajoYaExisteException;
 import es.ediae.master.programacion.gestionusuario.mapper.PuestoDeTrabajoMapper;
 import es.ediae.master.programacion.gestionusuario.repository.PuestoDeTrabajoRepository;
 import es.ediae.master.programacion.gestionusuario.service.IPuestoDeTrabajoService;
@@ -39,7 +42,7 @@ public class PuestoDeTrabajoServiceImpl implements IPuestoDeTrabajoService {
     @Override
     public PuestoDeTrabajoResponseDTO obtenerPuestoDeTrabajo(Integer id) {
         PuestoDeTrabajoEntity entidad = puestoDeTrabajoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Puesto de trabajo no encontrado"));
+                .orElseThrow(() -> new PuestoDeTrabajoNoEncontradoException());
         return puestoDeTrabajoMapper.convertirADTO(entidad);
     }
 
@@ -52,7 +55,7 @@ public class PuestoDeTrabajoServiceImpl implements IPuestoDeTrabajoService {
         // Comprobar si el puesto de trabajo ya existe en la base de datos (ignorando
         // mayusculas/minusculas)
         if (puestoDeTrabajoRepository.findByNombreIgnoreCase(nombre).isPresent()) {
-            throw new RuntimeException("El puesto de trabajo '" + nombre + "' ya existe");
+            throw new PuestoDeTrabajoYaExisteException();
         }
         PuestoDeTrabajoEntity entidad = puestoDeTrabajoMapper.convertirAEntity(puestoDeTrabajoRequestDTO);
         return puestoDeTrabajoMapper.convertirADTO(puestoDeTrabajoRepository.save(entidad));
@@ -65,13 +68,13 @@ public class PuestoDeTrabajoServiceImpl implements IPuestoDeTrabajoService {
             PuestoDeTrabajoRequestDTO puestoDeTrabajoRequestDTO) {
 
         PuestoDeTrabajoEntity entidadExistente = puestoDeTrabajoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Puesto de trabajo no encontrado"));
+                .orElseThrow(() -> new PuestoDeTrabajoNoEncontradoException());
         String nuevoNombre = puestoDeTrabajoRequestDTO.getNombre().trim();
         // Comprobar si el puesto de trabajo ya existe en la base de datos (ignorando
         // mayusculas/minusculas)
         Optional<PuestoDeTrabajoEntity> puestoDeTrabajoExistente = puestoDeTrabajoRepository.findByNombreIgnoreCase(nuevoNombre);
         if (puestoDeTrabajoExistente.isPresent() && !puestoDeTrabajoExistente.get().getId().equals(id)) {
-            throw new RuntimeException("El puesto de trabajo '" + nuevoNombre + "' ya existe");
+            throw new PuestoDeTrabajoYaExisteException();
         }
         entidadExistente.setNombre(nuevoNombre);
         return puestoDeTrabajoMapper.convertirADTO(puestoDeTrabajoRepository.save(entidadExistente));

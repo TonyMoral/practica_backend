@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioRequestDTO;
+import es.ediae.master.programacion.gestionusuario.dto.ImagenUsuarioResponseDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioRequestDTO;
 import es.ediae.master.programacion.gestionusuario.dto.UsuarioResponseDTO;
 import es.ediae.master.programacion.gestionusuario.service.IUsuarioService;
@@ -63,5 +65,24 @@ public class UsuarioController {
         return usuarioService.iniciarSesion(nickUsuario, contrasena);
     }
 
-    
+    @PostMapping("/imagen")
+    public ImagenUsuarioResponseDTO crearImagenUsuario(@RequestBody ImagenUsuarioRequestDTO dto){
+        return usuarioService.crearImagenUsuario(dto);
+    }
+
+    @GetMapping("/imagen/{id}")
+    public ImagenUsuarioResponseDTO obtenerImagenUsuario(@PathVariable Integer id){
+        return usuarioService.obtenerImagenUsuario(id);
+    }
+
+    @PutMapping("/imagen/{id}")
+    public ImagenUsuarioResponseDTO actualizarImagenUsuario(@PathVariable Integer id, @RequestBody ImagenUsuarioRequestDTO dto){
+        return usuarioService.actualizarImagenUsuario(id, dto);
+    }
+
+    @DeleteMapping("/imagen/{id}")
+    public void eliminarImagenUsuario(@PathVariable Integer id){
+        usuarioService.eliminarImagenUsuario(id);
+    }
+
 }

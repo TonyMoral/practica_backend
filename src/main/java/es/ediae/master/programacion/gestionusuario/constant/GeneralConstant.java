@@ -2,7 +2,8 @@ package es.ediae.master.programacion.gestionusuario.constant;
 
 public class GeneralConstant {
 
-    private GeneralConstant() {}
+    private GeneralConstant() {
+    }
 
     public static final String ERROR = "ERROR";
     public static final String FORBIDDEN = "FORBIDDEN";
@@ -41,7 +42,7 @@ public class GeneralConstant {
 
     public static final String IMAGEN_DE_USUARIO_NO_ENCONTRADO_ERROR_MESSAGE = "Imagen de Usuario no ha sido encontrado";
 
-    public static final String PUESTO_DE_TRABAJO_NO_ENCONTRADO_ERROR_MESSAGE = "El genero no ha sido encontrado";
+    public static final String PUESTO_DE_TRABAJO_NO_ENCONTRADO_ERROR_MESSAGE = "El puesto de trabajo no ha sido encontrado";
 
     public static final String USUARIO_NO_ENCONTRADO_ERROR_MESSAGE = "El usuario no ha sido encontrado";
 
@@ -61,6 +62,6 @@ public class GeneralConstant {
     public static final String DIRECCION_PRINCIPAL_NO_ENCONTRADA_ERROR_MESSAGE = "El usuario indicado no tiene direccion principal";
 
     public static final String USUARIO_NO_ADMIN_ERROR_MESSAGE = "El usuario no puede realizar esta operación porque no es admin";
-    public static final String OPERACION_NO_SOPORTADA_ERROR_CODE = null;
-
+    public static final int OPERACION_NO_SOPORTADA_ERROR_CODE = 11;
+    public static final String OPERACION_NO_SOPORTADA_ERROR_MESSAGE = "La operación solicitada no está soportada o no ha sido implementada";
 }

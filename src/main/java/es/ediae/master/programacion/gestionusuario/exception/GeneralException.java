@@ -1,6 +1,6 @@
 package es.ediae.master.programacion.gestionusuario.exception;
 
-public class GeneralException extends Exception {
+public class GeneralException extends RuntimeException {
 
     public GeneralException(int codigoDeError, String mensajeDeError) {
         super(mensajeDeError);
@@ -8,12 +8,7 @@ public class GeneralException extends Exception {
         this.mensajeDeError = mensajeDeError;
     }
 
-    public GeneralException(String operacionNoSoportadaErrorCode, String operacionNoSoportadaErrorCode2) {
-        //TODO Auto-generated constructor stub
-    }
-
     private int codigoDeError;
-
     private String mensajeDeError;
 
     public int getCodigoDeError() {

@@ -19,6 +19,13 @@ import es.ediae.master.programacion.gestionusuario.entity.GeneroEntity;
 import es.ediae.master.programacion.gestionusuario.entity.ImagenUsuarioEntity;
 import es.ediae.master.programacion.gestionusuario.entity.PuestoDeTrabajoEntity;
 import es.ediae.master.programacion.gestionusuario.entity.UsuarioEntity;
+import es.ediae.master.programacion.gestionusuario.exception.DireccionNoEncontradaException;
+import es.ediae.master.programacion.gestionusuario.exception.GeneroNoEncontradoException;
+import es.ediae.master.programacion.gestionusuario.exception.ImagenNoEncontradaException;
+import es.ediae.master.programacion.gestionusuario.exception.PuestoDeTrabajoNoEncontradoException;
+import es.ediae.master.programacion.gestionusuario.exception.UsuarioNickYaExisteException;
+import es.ediae.master.programacion.gestionusuario.exception.UsuarioNoEncontradoException;
+import es.ediae.master.programacion.gestionusuario.exception.UsuarioNoValidoException;
 import es.ediae.master.programacion.gestionusuario.mapper.ImagenUsuarioMapper;
 import es.ediae.master.programacion.gestionusuario.mapper.UsuarioMapper;
 import es.ediae.master.programacion.gestionusuario.repository.DireccionRepository;
@@ -56,12 +63,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public Boolean iniciarSesion(String nickUsuario, String contrasena) {
 
-        Optional<UsuarioEntity> usuarioOptional = usuarioRepository.findByNickUsuarioAndContrasena(nickUsuario, contrasena);
-        if (usuarioOptional.isEmpty()) {
-            return null;
-            
-        } 
-        return usuarioOptional.isPresent();
+        UsuarioEntity usuario = usuarioRepository.findByNickUsuarioAndContrasena(nickUsuario, contrasena)
+        .orElseThrow(() -> new UsuarioNoValidoException());
+
+        return true;
 
     }
 
@@ -87,11 +92,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioResponseDTO obtenerUsuario(Integer id) {
 
     UsuarioEntity usuario = usuarioRepository.findById(id)
-            .orElse(null);
-
-    if (usuario == null) {
-        throw new RuntimeException("Usuario no encontrado");
-    }
+            .orElseThrow(() -> new UsuarioNoEncontradoException());
 
     return usuarioMapper.convertirADTO(usuario);
 
@@ -105,21 +106,21 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO dto) {
 
         if (usuarioRepository.findByNickUsuario(dto.getNickUsuario()).isPresent()) {
-            throw new RuntimeException("El nick de usuario ya existe " + dto.getNickUsuario());
+            throw new UsuarioNickYaExisteException();
         }
 
         UsuarioEntity entity = usuarioMapper.convertirAEntity(dto);
 
         if (dto.getGeneroId() != null) {
             GeneroEntity genero = generoRepository.findById(dto.getGeneroId())
-                    .orElseThrow(() -> new RuntimeException("Género no encontrado"));
+                    .orElseThrow(() -> new GeneroNoEncontradoException());
 
             entity.setGenero(genero);
         }
 
         if (dto.getPuestoDeTrabajoId() != null) {
             PuestoDeTrabajoEntity puesto = puestoDeTrabajoRepository.findById(dto.getPuestoDeTrabajoId())
-                    .orElseThrow(() -> new RuntimeException("Puesto de trabajo no encontrado"));
+                    .orElseThrow(() -> new PuestoDeTrabajoNoEncontradoException());
 
             entity.setPuestoDeTrabajo(puesto);
         }
@@ -139,11 +140,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioResponseDTO actualizarUsuario(Integer id, UsuarioRequestDTO usuarioDTO) {
 
         UsuarioEntity usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNoEncontradoException());
 
         Optional<UsuarioEntity> usuarioConMismoNick = usuarioRepository.findByNickUsuario(usuarioDTO.getNickUsuario());
         if (usuarioConMismoNick.isPresent() && !usuarioConMismoNick.get().getId().equals(id)) {
-            throw new RuntimeException("El nick de usuario ya existe: " + usuarioDTO.getNickUsuario());
+            throw new UsuarioNickYaExisteException();
         }
 
         usuarioExistente.setNickUsuario(usuarioDTO.getNickUsuario());
@@ -156,10 +157,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
         }
         GeneroEntity genero;
         genero = generoRepository.findById(usuarioDTO.getGeneroId())
-                .orElseThrow(() -> new RuntimeException("Género no encontrado"));
+                .orElseThrow(() -> new GeneroNoEncontradoException());
         usuarioExistente.setGenero(genero);
         PuestoDeTrabajoEntity puestoDeTrabajo = puestoDeTrabajoRepository.findById(usuarioDTO.getPuestoDeTrabajoId())
-                .orElseThrow(() -> new RuntimeException("Puesto de trabajo no encontrado"));
+                .orElseThrow(() -> new PuestoDeTrabajoNoEncontradoException());
         usuarioExistente.setPuestoDeTrabajo(puestoDeTrabajo);
 
         usuarioExistente.setContrasena(usuarioDTO.getContrasena());
@@ -188,7 +189,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public ImagenUsuarioResponseDTO crearImagenUsuario(ImagenUsuarioRequestDTO imagenDTO) {
         UsuarioEntity usuario = usuarioRepository.findById(imagenDTO.getUsuarioId())
-        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        .orElseThrow(() -> new UsuarioNoEncontradoException());
 
         ImagenUsuarioEntity entity = imagenUsuarioMapper.convertirAEntity(imagenDTO);
         entity.setUsuario(usuario);
@@ -201,7 +202,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public ImagenUsuarioResponseDTO actualizarImagenUsuario(Integer id, ImagenUsuarioRequestDTO imagenDTO) {
         ImagenUsuarioEntity existente = imagenUsuarioRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+        .orElseThrow(() -> new ImagenNoEncontradaException());
 
         existente.setImagen(imagenDTO.getImagen());
         return imagenUsuarioMapper.convertirADTO(imagenUsuarioRepository.save(existente));
@@ -211,7 +212,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public ImagenUsuarioResponseDTO obtenerImagenUsuario(Integer id) {
         ImagenUsuarioEntity entity = imagenUsuarioRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Imagen no encontrada"));
+        .orElseThrow(() -> new ImagenNoEncontradaException());
         return imagenUsuarioMapper.convertirADTO(entity);
     }
 
